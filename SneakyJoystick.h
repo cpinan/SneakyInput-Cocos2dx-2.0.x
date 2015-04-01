@@ -3,8 +3,11 @@
 
 #include "cocos2d.h"
 
-class SneakyJoystick : public cocos2d::CCNode, public cocos2d::CCTargetedTouchDelegate 
+class SneakyJoystick : public cocos2d::CCNode
 {
+private:
+    cocos2d::EventListenerTouchOneByOne * mEventListenerTouch;
+
 protected:
 	float joystickRadiusSq;
 	float thumbRadiusSq;
@@ -31,13 +34,11 @@ protected:
 	void setJoystickRadius(float r);
 	void setThumbRadius(float r);
 	void setDeadRadius(float r);
-	virtual bool ccTouchBegan(cocos2d::CCTouch *touch, cocos2d::CCEvent *event);
-	virtual void ccTouchMoved(cocos2d::CCTouch *touch, cocos2d::CCEvent *event);
-	virtual void ccTouchEnded(cocos2d::CCTouch *touch, cocos2d::CCEvent *event);
-	virtual void ccTouchCancelled(cocos2d::CCTouch *touch, cocos2d::CCEvent *event);
-
-	void touchDelegateRelease();
-	void touchDelegateRetain();
+    
+    bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
+    void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
+    void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
+    void onTouchCancelled(cocos2d::Touch* touch, cocos2d::Event* event);
 
 private:
 	void updateVelocity(cocos2d::CCPoint point);

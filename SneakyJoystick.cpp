@@ -36,12 +36,18 @@ bool SneakyJoystick::initWithRect(CCRect rect)
 
 void SneakyJoystick::onEnterTransitionDidFinish()
 {
-	CCDirector::sharedDirector()->getTouchDispatcher()->addTargetedDelegate(this, 1, true);
+    mEventListenerTouch = EventListenerTouchOneByOne::create();
+    mEventListenerTouch->onTouchBegan = CC_CALLBACK_2(SneakyJoystick::onTouchBegan, this);
+    mEventListenerTouch->onTouchMoved = CC_CALLBACK_2(SneakyJoystick::onTouchMoved, this);
+    mEventListenerTouch->onTouchEnded = CC_CALLBACK_2(SneakyJoystick::onTouchEnded, this);
+    mEventListenerTouch->onTouchCancelled = CC_CALLBACK_2(SneakyJoystick::onTouchCancelled, this);
+    Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(mEventListenerTouch, this);
+
 }
 
 void SneakyJoystick::onExit()
 {
-	CCDirector::sharedDirector()->getTouchDispatcher()->removeDelegate(this);
+	Director::getInstance()->getEventDispatcher()->removeEventListener(mEventListenerTouch);
 }
 
 float round(float r) {
@@ -117,7 +123,7 @@ void SneakyJoystick::setDeadRadius(float r)
 	deadRadiusSq = r*r;
 }
 
-bool SneakyJoystick::ccTouchBegan(CCTouch *touch, CCEvent *event)
+bool SneakyJoystick::onTouchBegan(Touch* touch, Event* event)
 {
 	CCPoint location = CCDirector::sharedDirector()->convertToGL(touch->getLocationInView());
 
@@ -136,14 +142,14 @@ bool SneakyJoystick::ccTouchBegan(CCTouch *touch, CCEvent *event)
 	return false;
 }
 
-void SneakyJoystick::ccTouchMoved(CCTouch *touch, CCEvent *event)
+void SneakyJoystick::onTouchMoved(Touch* touch, Event* event)
 {
 	CCPoint location = CCDirector::sharedDirector()->convertToGL(touch->getLocationInView());
 	location = this->convertToNodeSpace(location);
 	this->updateVelocity(location);
 }
 
-void SneakyJoystick::ccTouchEnded(CCTouch *touch, CCEvent *event)
+void SneakyJoystick::onTouchEnded(Touch* touch, Event* event)
 {
 	CCPoint location = CCPointZero;
 	if(!autoCenter){
@@ -153,19 +159,9 @@ void SneakyJoystick::ccTouchEnded(CCTouch *touch, CCEvent *event)
 	this->updateVelocity(location);
 }
 
-void SneakyJoystick::ccTouchCancelled(CCTouch *touch, CCEvent *event)
+void SneakyJoystick::onTouchCancelled(Touch* touch, Event* event)
 {
-	this->ccTouchEnded(touch, event);
-}
-
-void SneakyJoystick::touchDelegateRelease()
-{
-	this->release();
-}
-
-void SneakyJoystick::touchDelegateRetain()
-{
-	this->retain();
+	this->onTouchEnded(touch, event);
 }
 
 

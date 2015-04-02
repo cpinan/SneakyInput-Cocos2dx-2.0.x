@@ -3,8 +3,11 @@
 
 #include "cocos2d.h"
 
-class SneakyButton : public cocos2d::CCNode, public cocos2d::CCTargetedTouchDelegate
+class SneakyButton : public cocos2d::CCNode
 {
+private:
+    cocos2d::EventListenerTouchOneByOne * mEventListenerTouch;
+    
 protected:
 	cocos2d::CCPoint center;
 	float radiusSq;
@@ -26,13 +29,12 @@ protected:
 	bool initWithRect(cocos2d::CCRect rect);
 	void limiter(float delta);
 	void setRadius(float r);
-	virtual bool ccTouchBegan(cocos2d::CCTouch *touch, cocos2d::CCEvent *event);
-	virtual void ccTouchMoved(cocos2d::CCTouch *touch, cocos2d::CCEvent *event);
-	virtual void ccTouchEnded(cocos2d::CCTouch *touch, cocos2d::CCEvent *event);
-	virtual void ccTouchCancelled(cocos2d::CCTouch *touch, cocos2d::CCEvent *event);
+    
+    bool onTouchBegan(cocos2d::Touch* touch, cocos2d::Event* event);
+    void onTouchMoved(cocos2d::Touch* touch, cocos2d::Event* event);
+    void onTouchEnded(cocos2d::Touch* touch, cocos2d::Event* event);
+    void onTouchCancelled(cocos2d::Touch* touch, cocos2d::Event* event);
 
-	void touchDelegateRelease();
-	void touchDelegateRetain();
 };
 
 #endif
